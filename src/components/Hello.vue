@@ -1,11 +1,19 @@
 <template>
-  <div class="hello">
-    <h1>web-chat聊天室</h1>
-    <h2>Essential Links</h2>
+  <div class="chat-room" id="chat-room">
+    <Header class="chat-header">
+      <h1>web-chat聊天室</h1>
+    </Header>
+    <div class="chat-content"></div>
+    <div class="chat-form">
+      <input class="chat-input" placeholder="请输入聊天内容" v-model="message"></input>
+      <button class="chat-btn">发送</button>
+    </div>
   </div>
 </template>
 
 <script>
+  import Vue from 'vue';
+
   const socket = require('socket.io-client')('http://localhost:8080');
 
   const say = () => {
@@ -13,6 +21,15 @@
   };
   socket.on('connect', say);
   socket.on('chat message', say);
+
+  export default {
+    data(){
+            return{
+                message:'app'
+            }
+        }
+  };
+  console.log()
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -33,5 +50,62 @@ li {
 
 a {
   color: #42b983;
+}
+
+.chat-room{
+  position: absolute;
+  top:0px;
+  left:0px;
+  right:0px;
+  bottom:0px;
+}
+
+.chat-header{
+  position: relative;
+  height: 60px;
+  text-align: center;
+  line-height: 60px;
+  background-color: gray;
+  color: white;
+}
+
+.chat-content{
+  position: absolute;
+  top:60px;
+  left: 0px;
+  bottom:60px;
+  right: 0px;
+  background-color: #f3f3f3;
+}
+
+.chat-form{
+  position: absolute;
+  display: table;
+  left: 0px;
+  bottom: 0px;
+  height: 60px;
+  width: 100%;
+  vertical-align: middle;
+  border:0px;
+}
+
+.chat-input{
+  display: table-cell;
+  width: 80%;
+  height: 60px;
+  border:0px;
+  line-height: 60px;
+  font-size: 22px;
+}
+
+.chat-btn{
+  display: table-cell;
+  width: 20%;
+  height: 60px;
+  line-height: 60px;
+  border:0px;
+  color: #fff;
+  background-color: gray;
+  font-size: 22px;
 }
 </style>
