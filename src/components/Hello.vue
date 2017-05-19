@@ -3,10 +3,16 @@
     <Header class="chat-header">
       <h1>web-chat聊天室</h1>
     </Header>
-    <div class="chat-content"></div>
+    <div class="chat-content">
+      <ul v-if="msgList !== []">
+        <li v-for="msg in msgList">
+          {{ msg }}
+        </li>
+      </ul>
+    </div>
     <div class="chat-form">
       <input class="chat-input" placeholder="请输入聊天内容" v-model="message"></input>
-      <button class="chat-btn">发送</button>
+      <button class="chat-btn" v-on:click="submit">发送</button>
     </div>
   </div>
 </template>
@@ -17,19 +23,45 @@
   const socket = require('socket.io-client')('http://localhost:8080');
 
   const say = () => {
-    console.log('aacc');
+    console.log('已连接至聊天室');
   };
   socket.on('connect', say);
-  socket.on('chat message', say);
 
   export default {
     data(){
             return{
-                message:'app'
+                message:'app',
+                msgList:['789']
             }
-        }
+        },
+    created:function(){
+      console.log("created")
+    },
+    mouted:function(){
+      console.log("mouted")
+    },
+    updated:function(){
+      
+      console.log("updated")
+    },
+    destroyed:function(){
+      console.log("destoryed")
+    },
+    watch: {
+    },
+    methods:{
+      submit:function(e){
+        socket.emit('chat message', this.message);
+        this.message = '';
+        socket.on('chat message', (msg) => {
+                    this.msgList.push(msg);
+                    console.log(this.msgList)
+                    console.log(msg)
+                  });
+        return false;
+      }
+    }
   };
-  console.log()
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
