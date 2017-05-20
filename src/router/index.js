@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Hello from '@/components/Hello';
+import ChatRoom from '@/components/ChatRoom';
+import SignIn from '@/components/SignIn';
 
 Vue.use(Router);
 
@@ -8,8 +9,13 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Hello',
-      component: Hello,
+      name: 'SignIn',
+      component: SignIn,
     },
+    {
+    	path:'/chatroom',
+    	name:'ChatRoom',
+    	component:ChatRoom
+    }
   ],
 });

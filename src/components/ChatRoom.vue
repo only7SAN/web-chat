@@ -4,64 +4,58 @@
       <h1>web-chat聊天室</h1>
     </Header>
     <div class="chat-content">
-      <ul v-if="msgList !== []">
-        <li v-for="msg in msgList">
-          {{ msg }}
+      <ul class="chat-msg-ul" v-if="msgList !== []">
+        <li class="chat-msg-li" v-for="msg in msgList">
+          <div class="chat-msg-box" v-bind:class="{active:msg.name==name }">
+            <span class="chat-msg-name">{{ msg.name }}:</span>
+            <span class="chat-msg-p">{{ msg.message }}</span>
+          </div>
         </li>
       </ul>
     </div>
     <div class="chat-form">
       <input class="chat-input" placeholder="请输入聊天内容" v-model="message"></input>
-      <button class="chat-btn" v-on:click="submit">发送</button>
+      <button class="chat-btn" v-on:click.stop.prevent="submit">发送</button>
     </div>
   </div>
 </template>
 
 <script>
-  import Vue from 'vue';
-
-  const socket = require('socket.io-client')('http://localhost:8080');
-
-  const say = () => {
-    console.log('已连接至聊天室');
-  };
-  socket.on('connect', say);
-
-  export default {
-    data(){
-            return{
-                message:'app',
-                msgList:['789']
-            }
-        },
-    created:function(){
-      console.log("created")
+export default {
+  sockets:{
+    connect:function(){
+      console.log(this.name + "已进入聊天室");
     },
-    mouted:function(){
-      console.log("mouted")
-    },
-    updated:function(){
-      
-      console.log("updated")
-    },
-    destroyed:function(){
-      console.log("destoryed")
-    },
-    watch: {
-    },
-    methods:{
-      submit:function(e){
-        socket.emit('chat message', this.message);
-        this.message = '';
-        socket.on('chat message', (msg) => {
-                    this.msgList.push(msg);
-                    console.log(this.msgList)
-                    console.log(msg)
-                  });
-        return false;
-      }
+    chatMessage: function(data){
+      console.log('this method is sending message');
+      console.log(data)
+      this.msgList.push(data);
     }
-  };
+  },
+  created:function(){
+    if(this.name == ''){
+      this.$router.push({path:'/'});
+    }
+  },
+  data(){
+          return{
+              message:'',
+              msgList:[],
+              name:JSON.parse(sessionStorage.getItem("name"))
+          }
+      },
+  methods:{
+    submit:function(e){
+      console.log(this.name)
+      this.$socket.emit('chatMessage',{
+        name:this.name,
+        message:this.message
+      });
+      this.message = '';
+      return false;
+    }
+  }
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -108,6 +102,25 @@ a {
   bottom:60px;
   right: 0px;
   background-color: #f3f3f3;
+}
+
+.chat-msg-ul{
+  overflow: hidden;
+}
+
+.chat-msg-li{
+  display: block;
+  padding:10px 20px;
+  line-height: 20px;
+  overflow: hidden;
+}
+
+.active{
+}
+
+.chat-msg-p{
+  padding: 5px 10px;
+  border:1px solid gray;
 }
 
 .chat-form{
