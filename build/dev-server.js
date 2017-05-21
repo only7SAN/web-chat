@@ -79,9 +79,13 @@ app.get('/', function(req, res){
 
 io.on('connection', function(socket){
   console.log('a user connected');
-  socket.on('chatMessage', function(msg){
-    console.log("msg: "+msg)
-    io.emit('chatMessage',msg);
+  socket.on('userMessage',function(user){
+    console.log("user: " + user.name + "已连接" );
+    io.emit('userMessage',user);
+  });
+  socket.on('chatMessage', function(data){
+    console.log(data);
+    io.emit('chatMessage',data);
   });
   socket.on('disconnect', function(){
     console.log('user disconnected');

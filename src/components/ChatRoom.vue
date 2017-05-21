@@ -1,7 +1,7 @@
 <template>
   <div class="chat-room" id="chat-room">
     <Header class="chat-header">
-      <h1>web-chat聊天室</h1>
+      <h1>web-chat聊天室{{userList}}</h1>
     </Header>
     <div class="chat-content">
       <ul class="chat-msg-ul" v-if="msgList !== []">
@@ -25,14 +25,22 @@ export default {
   sockets:{
     connect:function(){
       console.log(this.name + "已进入聊天室");
+      this.$socket.emit('userMessage',{
+        name:this.name
+      });
     },
     chatMessage: function(data){
       console.log('this method is sending message');
-      console.log(data)
       this.msgList.push(data);
+    },
+    userMessage: function(user){
+      console.log(user)
+      this.userList.push(user);
+      console.log(this.userList);
     }
   },
   created:function(){
+    console.log(this.name)
     if(this.name == ''){
       this.$router.push({path:'/'});
     }
@@ -41,6 +49,7 @@ export default {
           return{
               message:'',
               msgList:[],
+              userList:[],
               name:JSON.parse(sessionStorage.getItem("name"))
           }
       },
