@@ -77,18 +77,25 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
+var userList = [];  //在线用户列表
+
 io.on('connection', function(socket){
-  console.log('a user connected');
-  socket.on('userMessage',function(user){
+  console.log('sockt.io connected');
+  socket.on('userSignIn',function(user){
     console.log("user: " + user.name + "已连接" );
-    io.emit('userMessage',user);
+    console.log(userList);
+    userList.push(user);
+    io.emit('userSignIn',{ userList:userList });
   });
   socket.on('chatMessage', function(data){
-    console.log(data);
     io.emit('chatMessage',data);
   });
+  socket.on('userSignOut', function(user){
+    userList.push(user);
+    io.emit('userSignOut',{ userList:userList });
+  });
   socket.on('disconnect', function(){
-    console.log('user disconnected');
+    console.log('sockt.io disconnected');
   });
 });
 
